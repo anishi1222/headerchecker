@@ -110,18 +110,18 @@
                     </compilerArgs>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <image>
-                        <builder>paketobuildpacks/builder-jammy-base:latest</builder>
-                    </image>
-                    <environmentVariables>
-                        <BP_JVM_VERSION>21</BP_JVM_VERSION>
-                    </environmentVariables>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.springframework.boot</groupId>-->
+<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <image>-->
+<!--                        <builder>paketobuildpacks/builder-jammy-base:latest</builder>-->
+<!--                    </image>-->
+<!--                    <environmentVariables>-->
+<!--                        <BP_JVM_VERSION>21</BP_JVM_VERSION>-->
+<!--                    </environmentVariables>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 </project>
