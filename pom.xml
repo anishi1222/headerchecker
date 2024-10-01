@@ -117,6 +117,9 @@
                     <image>
                         <builder>paketobuildpacks/builder-jammy-base:latest</builder>
                     </image>
+                    <environmentVariables>
+                        <BP_JVM_VERSION>21</BP_JVM_VERSION>
+                    </environmentVariables>
                 </configuration>
             </plugin>
         </plugins>
