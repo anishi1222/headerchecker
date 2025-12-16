@@ -34,22 +34,3 @@ jobs:
         export TAG=${{ env:TAG }}-native
         docker build . --file Dockerfile.native --tag $TAG
         docker push $TAG
-
-  build_with_GraalVM:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: CheckOut
-      uses: actions/checkout@v4
-    
-    - name: Build the Docker image for Native Image
-      uses: graalvm/setup-graalvm@v1
-      with:
-          java-version: ${{ var:JavaVersion }}      # See 'Options' for more details
-          distribution: 'graalvm' # See 'Supported distributions' for available options
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Example step
-      run: |
-      - name: Example step using Gradle plugin # https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html
-        run: gradlew nativeCompile      run:
