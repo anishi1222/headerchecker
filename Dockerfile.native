@@ -1,6 +1,6 @@
 ARG BUILD_IMAGE=container-registry.oracle.com/graalvm/native-image:25.0.1-ol9-20251021
-# ARG CORE_IMAGE=mcr.microsoft.com/cbl-mariner/base/core:2.0-nonroot
-ARG CORE_IMAGE=mcr.microsoft.com/azurelinux/distroless/minimal:3.0.20251206-amd64
+ARG CORE_IMAGE=mcr.microsoft.com/cbl-mariner/base/core:2.0-nonroot
+# ARG CORE_IMAGE=mcr.microsoft.com/azurelinux/distroless/minimal:3.0.20251206-amd64
 # ---------------------------------------------------
 # Build an artifact
 # ---------------------------------------------------
