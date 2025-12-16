@@ -1,53 +1,31 @@
-name: Docker Image CI
+ARG BUILD_IMAGE=container-registry.oracle.com/graalvm/native-image:25.0.1-muslib-ol9-20251021
+ARG CORE_IMAGE=mcr.microsoft.com/azurelinux/base/core:3.0
+# ARG CORE_IMAGE=mcr.microsoft.com/cbl-mariner/base/core:2.0-nonroot
 
-on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
-  workflow_dispatch:
+# ---------------------------------------------------
+# Build an artifact
+# ---------------------------------------------------
+FROM ${BUILD_IMAGE} AS build
+RUN microdnf install maven
+WORKDIR /app
+ENV TMPDIR=/workspace/.tmp
+RUN mkdir -p $TMPDIR
+COPY pom.xml ./
+COPY src ./src
 
-concurrency:
-  group: ${{ github.ref }}
-  cancel-in-progress: true  
+RUN --mount=type=tmpfs,target=/tmp mvn clean package -Dpackaging=native-image -Pgraalvm -Dmaven.test.skip
 
-env:
-  TAG: ${{ secrets.DOCKERHUB_USERNAME }}/headerchecker:${{ vars.JDK_VERSION }}
+# ---------------------------------------------------
+# Build container
+# ---------------------------------------------------
+FROM ${CORE_IMAGE}
 
-jobs:
-  build_with_JDK:
+RUN useradd -r -u 10001 -g root app \
+    && mkdir -p /app \
+    && chown -R 10001:0 /app
 
-    runs-on: ubuntu-latest
-    steps:
-    - name: CheckOut
-      uses: actions/checkout@v4
-
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-    
-    - name: Build the Docker image (JDK)
-      run: |
-        docker build . --file Dockerfile --tag ${{ env.TAG }}
-        docker push ${{ env.TAG }}
-
-  build_with_GraalVM:
-
-    runs-on: ubuntu-latest
-    steps:
-    - name: CheckOut
-      uses: actions/checkout@v4
-
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-    
-    - name: Build the Docker image (GraalVM)
-      run: |
-        export DOCKER_BUILDKIT=1
-        docker build . --file Dockerfile.native --tag ${{ env.TAG }}-native
-        docker push ${{ env.TAG }}-native
+WORKDIR /opt/app
+USER 10001
+COPY --from=build /app/target/headerchecker-0.1 ./app
+EXPOSE 8080
+ENTRYPOINT ["./app"]
