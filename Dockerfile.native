@@ -1,0 +1,22 @@
+ARG BUILD_IMAGE=container-registry.oracle.com/graalvm/native-image:25.0.1-muslib-ol9-20251021
+ARG CORE_IMAGE=mcr.microsoft.com/azurelinux/distroless/minimal:3.0.20251206-amd64
+# ---------------------------------------------------
+# Build an artifact
+# ---------------------------------------------------
+FROM ${BUILD_IMAGE} AS build
+RUN microdnf install maven
+WORKDIR /app
+COPY pom.xml ./
+COPY src ./src
+
+RUN mvn clean package -Dpackaging=native-image -Pgraalvm -Dmaven.test.skip
+
+# ---------------------------------------------------
+# Build container
+# ---------------------------------------------------
+FROM ${CORE_IMAGE}
+USER app
+WORKDIR /opt/app
+COPY --from=build /target/headerchecker ./app
+EXPOSE 8080
+ENTRYPOINT ["./app"]
