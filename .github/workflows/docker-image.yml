@@ -33,12 +33,6 @@ jobs:
         docker build . --file Dockerfile --tag ${{ env.TAG }}
         docker push ${{ env.TAG }}
 
-    - name: Build the Docker image (GraalVM)
-      run: |
-        export DOCKER_BUILDKIT=1
-        docker build . --file Dockerfile.native --tag ${{ env.TAG }}-native
-        docker push ${{ env.TAG }}-native
-
   build_with_GraalVM:
 
     runs-on: ubuntu-latest
