@@ -66,11 +66,11 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.fusesource.jansi</groupId>-->
-<!--            <artifactId>jansi</artifactId>-->
-<!--            <version>2.4.2</version>-->
-<!--        </dependency>-->
+       <dependency>
+           <groupId>org.fusesource.jansi</groupId>
+           <artifactId>jansi</artifactId>
+           <version>2.4.2</version>
+       </dependency>
     </dependencies>
     <build>
         <plugins>
