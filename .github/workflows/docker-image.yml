@@ -13,7 +13,7 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      TAG: ${{ secrets.DOCKERHUB_USERNAME }}/headerchecker:${{ var.JDK_VERSION }}
+      TAG: ${{ secrets.DOCKERHUB_USERNAME }}/headerchecker:${{ vars.JDK_VERSION }}
     steps:
     - name: CheckOut
       uses: actions/checkout@v4
