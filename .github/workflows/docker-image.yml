@@ -12,7 +12,8 @@ jobs:
   build_with_JDK:
 
     runs-on: ubuntu-latest
-    env: TAG=${{ secrets.DOCKERHUB_USERNAME }}/headerchecker:$(date +%s)
+    env:
+      TAG: ${{ secrets.DOCKERHUB_USERNAME }}/headerchecker:$(date +%s)
     steps:
     - name: CheckOut
       uses: actions/checkout@v4
