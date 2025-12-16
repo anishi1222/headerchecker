@@ -31,5 +31,6 @@ jobs:
 
     - name: Build the Docker image (GraalVM)
       run: |
+        export DOCKER_BUILDKIT=1
         docker build . --file Dockerfile.native --tag ${{ env.TAG }}-native
         docker push ${{ env.TAG }}-native
