@@ -26,12 +26,10 @@ jobs:
     
     - name: Build the Docker image (JDK)
       run: |
-        export TAG=${{ env.TAG }}
-        docker build . --file Dockerfile --tag $TAG
-        docker push $TAG
+        docker build . --file Dockerfile --tag ${{ env.TAG }}
+        docker push ${{ env.TAG }}
 
     - name: Build the Docker image (GraalVM)
       run: |
-        export TAG=${{ env:TAG }}-native
-        docker build . --file Dockerfile.native --tag $TAG
-        docker push $TAG
+        docker build . --file Dockerfile.native --tag ${{ env.TAG }}-native
+        docker push ${{ env.TAG }}-native
