@@ -1,31 +1,53 @@
-ARG BUILD_IMAGE=container-registry.oracle.com/graalvm/native-image:25.0.1-ol9-20251021 
-# ARG CORE_IMAGE=mcr.microsoft.com/cbl-mariner/base/core:2.0-nonroot
-ARG CORE_IMAGE=mcr.microsoft.com/azurelinux/base/core:3.0
+name: Docker Image CI
 
-# ---------------------------------------------------
-# Build an artifact
-# ---------------------------------------------------
-FROM ${BUILD_IMAGE} AS build
-RUN microdnf install maven
-WORKDIR /app
-ENV TMPDIR=/workspace/.tmp
-RUN mkdir -p $TMPDIR
-COPY pom.xml ./
-COPY src ./src
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:
 
-RUN --mount=type=tmpfs,target=/tmp mvn clean package -Dpackaging=native-image -Pgraalvm -Dmaven.test.skip
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true  
 
-# ---------------------------------------------------
-# Build container
-# ---------------------------------------------------
-FROM ${CORE_IMAGE}
+env:
+  TAG: ${{ secrets.DOCKERHUB_USERNAME }}/headerchecker:${{ vars.JDK_VERSION }}
 
-RUN useradd -r -u 10001 -g root app \
-    && mkdir -p /opt/app \
-    && chown -R 10001:0 /opt/app
+jobs:
+  build_with_JDK:
 
-WORKDIR /opt/app
-USER 10001
-COPY --from=build /app/target/headerchecker-0.1 ./app
-EXPOSE 8080
-ENTRYPOINT ["./app"]
+    runs-on: ubuntu-latest
+    steps:
+    - name: CheckOut
+      uses: actions/checkout@v4
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    
+    - name: Build the Docker image (JDK)
+      run: |
+        docker build . --file Dockerfile --tag ${{ env.TAG }}
+        docker push ${{ env.TAG }}
+
+  build_with_GraalVM:
+
+    runs-on: ubuntu-latest
+    steps:
+    - name: CheckOut
+      uses: actions/checkout@v4
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    
+    - name: Build the Docker image (GraalVM)
+      run: |
+        export DOCKER_BUILDKIT=1
+        docker build . --file Dockerfile.native --tag ${{ env.TAG }}-native
+        docker push ${{ env.TAG }}-native
