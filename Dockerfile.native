@@ -12,8 +12,8 @@ RUN mkdir -p $TMPDIR
 COPY pom.xml ./
 COPY src ./src
 
-# RUN --mount=type=tmpfs,target=/tmp mvn clean package -Dpackaging=native-image -Pgraalvm -Dmaven.test.skip
-RUN mvn clean package -Dpackaging=native-image -Pgraalvm -Dmaven.test.skip
+RUN --mount=type=tmpfs,target=/tmp mvn clean package -Dpackaging=native-image -Pgraalvm -Dmaven.test.skip
+# RUN mvn clean package -Dpackaging=native-image -Pgraalvm -Dmaven.test.skip
 
 # ---------------------------------------------------
 # Build container
@@ -21,6 +21,6 @@ RUN mvn clean package -Dpackaging=native-image -Pgraalvm -Dmaven.test.skip
 FROM ${CORE_IMAGE}
 USER app
 WORKDIR /opt/app
-COPY --from=build /target/headerchecker-0.1 ./app
+COPY --from=build /app/target/headerchecker ./app
 EXPOSE 8080
 ENTRYPOINT ["./app"]
