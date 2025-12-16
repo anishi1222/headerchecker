@@ -21,8 +21,8 @@ RUN --mount=type=tmpfs,target=/tmp mvn clean package -Dpackaging=native-image -P
 FROM ${CORE_IMAGE}
 
 RUN useradd -r -u 10001 -g root app \
-    && mkdir -p /app \
-    && chown -R 10001:0 /app
+    && mkdir -p /opt/app \
+    && chown -R 10001:0 /opt/app
 
 WORKDIR /opt/app
 USER 10001
