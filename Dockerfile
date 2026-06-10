@@ -1,5 +1,6 @@
 ARG BUILD_IMAGE=maven:3.9.16-eclipse-temurin-25
-ARG RUNTIME_IMAGE=mcr.microsoft.com/openjdk/jdk:25-distroless
+# ARG RUNTIME_IMAGE=mcr.microsoft.com/openjdk/jdk:25-distroless
+ARG RUNTIME_IMAGE=mcr.microsoft.com/openjdk/jdk:25-azurelinux
 
 # ---------------------------------------------------
 # Build an artifact
@@ -20,4 +21,5 @@ WORKDIR /opt/app
 COPY --from=build /target/headerchecker-0.1.jar app.jar
 EXPOSE 8080
 #CMD ["-XX:+UseParallelGC","-XX:MaxRAMPercentage=75","-XX:InitialRAMPercentage=75","-XX:+UseStringDeduplication", "-javaagent:applicationinsights-agent-3.7.7.jar", "-jar", "app.jar"]
-CMD ["-XX:+UseParallelGC","-XX:MaxRAMPercentage=75","-XX:InitialRAMPercentage=75","-XX:+UseStringDeduplication", "-jar", "app.jar"]
+# CMD ["-XX:+UseParallelGC","-XX:MaxRAMPercentage=75","-XX:InitialRAMPercentage=75","-XX:+UseStringDeduplication", "-jar", "app.jar"]
+CMD ["jaz", "-jar", "app.jar"]
